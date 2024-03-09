@@ -17,17 +17,7 @@ class FamilyTreeScreen(Screens):
         super().__init__(name)
         self.next_cat = None
         self.previous_cat = None
-        self.grandkits_tab = None
-        self.kits_mates_tab = None
-        self.kits_tab = None
-        self.mates_tab = None
-        self.siblings_kits_tab = None
-        self.siblings_mates_tab = None
-        self.siblings_tab = None
-        self.cousins_tab = None
-        self.parents_siblings_tab = None
-        self.parents_tab = None
-        self.grandparents_tab = None
+
         self.next_group_page = None
         self.previous_group_page = None
         self.root_cat = None
@@ -35,33 +25,11 @@ class FamilyTreeScreen(Screens):
         self.center_cat_frame = None
         self.root_cat_frame = None
         self.relation_backdrop = None
-        self.grandkits_button = None
-        self.kits_mates_button = None
-        self.kits_button = None
-        self.mates_button = None
-        self.sibling_kits_button = None
-        self.sibling_mates_button = None
-        self.siblings_button = None
-        self.cousins_button = None
-        self.parents_siblings_button = None
-        self.parents_button = None
-        self.grandparents_button = None
+       
         self.back_button = None
         self.next_cat_button = None
         self.previous_cat_button = None
         self.the_cat = None
-
-        self.grandparents = []
-        self.parents = []
-        self.parents_siblings = []
-        self.cousins = []
-        self.siblings = []
-        self.siblings_mates = []
-        self.siblings_kits = []
-        self.mates = []
-        self.kits = []
-        self.kits_mates = []
-        self.grandkits = []
 
         self.cat_elements = {}
         self.relation_elements = {}
@@ -92,59 +60,14 @@ class FamilyTreeScreen(Screens):
                     self.screen_switches()
                 else:
                     print("invalid next cat", self.next_cat)
-            elif event.ui_element == self.parents_button:
-                self.current_group = self.parents
-                self.current_group_name = "parents"
-                self.handle_relation_groups()
-            elif event.ui_element == self.siblings_button:
-                self.current_group = self.siblings
-                self.current_group_name = "siblings"
-                self.handle_relation_groups()
-            elif event.ui_element == self.sibling_mates_button:
-                self.current_group = self.siblings_mates
-                self.current_group_name = "siblings_mates"
-                self.handle_relation_groups()
-            elif event.ui_element == self.sibling_kits_button:
-                self.current_group = self.siblings_kits
-                self.current_group_name = "siblings_kits"
-                self.handle_relation_groups()
-            elif event.ui_element == self.parents_siblings_button:
-                self.current_group = self.parents_siblings
-                self.current_group_name = "parents_siblings"
-                self.handle_relation_groups()
-            elif event.ui_element == self.cousins_button:
-                self.current_group = self.cousins
-                self.current_group_name = "cousins"
-                self.handle_relation_groups()
-            elif event.ui_element == self.grandparents_button:
-                self.current_group = self.grandparents
-                self.current_group_name = "grandparents"
-                self.handle_relation_groups()
-            elif event.ui_element == self.mates_button:
-                self.current_group = self.mates
-                self.current_group_name = "mates"
-                self.handle_relation_groups()
-            elif event.ui_element == self.kits_button:
-                self.current_group = self.kits
-                self.current_group_name = "kits"
-                self.handle_relation_groups()
-            elif event.ui_element == self.kits_mates_button:
-                self.current_group = self.kits_mates
-                self.current_group_name = "kits_mates"
-                self.handle_relation_groups()
-            elif event.ui_element == self.grandkits_button:
-                self.current_group = self.grandkits
-                self.current_group_name = "grandkits"
-                self.handle_relation_groups()
+            
             elif event.ui_element == self.previous_group_page:
                 self.group_page_number -= 1
                 self.handle_relation_groups()
             elif event.ui_element == self.next_group_page:
                 self.group_page_number += 1
                 self.handle_relation_groups()
-            elif event.ui_element == self.cat_elements["center_cat_image"]:
-                self.change_screen('profile screen')
-                game.switches['root_cat'] = None
+           
             elif event.ui_element in self.relation_elements.values() or self.cat_elements.values():
                 try:
                     id = event.ui_element.return_cat_id()
@@ -244,8 +167,8 @@ class FamilyTreeScreen(Screens):
         # will need these later to adjust positioning
         # as the various groups are collected, the x_pos and y_pos are adjusted to account for the new buttons,
         # these affect the positioning of all the buttons
-        x_pos = 0
-        y_pos = 0
+        x_pos = 700
+        y_pos = 500
 
         # as the various groups are collected, the x_dim and y_dim are adjusted to account for the new button,
         # these affect the size and positioning of the UIContainer holding the family tree
@@ -255,59 +178,10 @@ class FamilyTreeScreen(Screens):
         if not self.the_cat.inheritance:
             self.the_cat.create_inheritance_new_cat()
 
-        self.parents = self.the_cat.inheritance.get_parents()
-        self.mates = self.the_cat.inheritance.get_mates()
-        self.kits = self.the_cat.inheritance.get_children()
-        self.kits_mates = self.the_cat.inheritance.get_kits_mates()
-        self.siblings = self.the_cat.inheritance.get_siblings()
-        self.siblings_mates = self.the_cat.inheritance.get_siblings_mates()
-        self.siblings_kits = self.the_cat.inheritance.get_siblings_kits()
-        self.parents_siblings = self.the_cat.inheritance.get_parents_siblings()
-        self.cousins = self.the_cat.inheritance.get_cousins()
-        self.grandparents = self.the_cat.inheritance.get_grand_parents()
-        self.grandkits = self.the_cat.inheritance.get_grand_kits()
-
-        # collect grandparents
-        if self.parents:
-            y_dim += 196
-            y_pos += 196
-            if self.grandparents:
-                y_dim += 160
-                y_pos += 160
-
-            x_dim += 309
-            if self.siblings_mates:
-                x_dim += 417
-            if self.siblings_kits:
-                y_dim += 80
-                if not self.siblings_mates:
-                    x_dim += 417
-
-        # collect cousins
-        if self.parents_siblings:
-            if not self.siblings_mates and not self.siblings_kits:
-                x_dim += 433
         
-        # collect mates
-        if self.mates or self.kits:
-            x_pos += 276
-            x_dim += 280
-        # collect kits
-        if self.kits:
-            if not self.siblings_kits:
-                y_dim += 80
-            if self.kits_mates:
-                x_pos += 202
-                x_dim += 202
-            if self.grandkits:
-                y_dim += 140
-                if not self.kits_mates:
-                    x_pos += 202
-                    x_dim += 202
-
         self.family_tree.kill()
         self.family_tree = pygame_gui.core.UIContainer(
-            scale(pygame.Rect((800 - x_dim / 2, 550 - y_dim / 2), (x_dim, y_dim))),
+            scale(pygame.Rect((0, 0), (2000, 2000))),
             MANAGER)
 
         # creating the center frame, cat, and name
@@ -323,95 +197,64 @@ class FamilyTreeScreen(Screens):
                                                                               object_id=get_text_box_theme(
                                                                                   "#text_box_22_horizcenter_spacing_95"),
                                                                               manager=MANAGER, )
-        self.center_cat_frame = pygame_gui.elements.UIImage(scale(pygame.Rect((x_pos, y_pos), (160, 180))),
-                                                            pygame.transform.scale(
-                                                                image_cache.load_image(
-                                                                    "resources/images/familytree_smallcatbox.png").convert_alpha(),
-                                                                (160, 180)),
-                                                            manager=MANAGER,
-                                                            container=self.family_tree)
-        self.center_cat_frame.disable()
-        self.cat_elements['center_cat_image'] = UISpriteButton(scale(pygame.Rect((x_pos + 30, y_pos + 20), (100, 100))),
-                                                               self.the_cat.sprite,
-                                                               cat_id=self.the_cat.ID,
-                                                               manager=MANAGER,
-                                                               container=self.family_tree)
-        name = str(self.the_cat.name)
-        short_name = shorten_text_to_fit(name, 114, 22)
+        
+        focus_cat = self.the_cat
+        self.add_family_elements(focus_cat, x_pos, y_pos, 1, direction="ancestor")
+        self.add_family_elements(focus_cat, x_pos, y_pos, 1, direction="descendant")  
 
-        self.cat_elements["center_cat_name"] = pygame_gui.elements.ui_label.UILabel(scale(pygame.Rect((10 + x_pos, 90 + y_pos), (145, 100))), short_name, object_id="#text_box_22_horizcenter", manager=MANAGER, container=self.family_tree)
+    def add_family_elements(self, focus_cat, x_pos, y_pos, depth=1, max_depth=5, direction="ancestor"):
+        if focus_cat is None or depth > max_depth:
+            return
+
+        # Display the current cat (excluding sibling calls to avoid duplication)
+        if direction != "sibling":
+            name = str(focus_cat.name)
+            short_name = shorten_text_to_fit(name, 260, 22)
+            # self.cat_elements[f"{direction}_{depth}_{focus_cat.name}"] = pygame_gui.elements.ui_label.UILabel(
+            #     scale(pygame.Rect((x_pos, y_pos), (145, 100))),
+            #     short_name,
+            #     object_id="#text_box_22_horizcenter",
+            #     manager=MANAGER,
+            #     container=self.family_tree
+            # )
+            self.cat_elements[f"{direction}_{depth}_{focus_cat.name}"] = UISpriteButton(scale(pygame.Rect((x_pos, y_pos), (100, 100))),
+                                                            focus_cat.sprite,
+                                                            cat_id=focus_cat.ID,
+                                                            container=self.family_tree,
+                                                            manager=MANAGER)
+
+        # Sibling handling should not increase depth or cause further recursive calls
+        if depth == 1 and direction != "sibling":
+            siblings = [cat for cat_id, cat in Cat.all_cats.items() if (cat.parent1 == focus_cat.parent1 or cat.parent2 == focus_cat.parent2) and cat_id != focus_cat.name]
+            sibling_spacing = 200
+            # Adjust x_pos for siblings to spread out horizontally without changing y_pos
+            for i, sibling in enumerate(siblings, start=1):
+                sibling_x_pos = x_pos + (sibling_spacing * i) - (sibling_spacing * len(siblings) / 2)
+                self.add_family_elements(sibling, sibling_x_pos, y_pos, depth, max_depth, "sibling")
+
+        if direction == "ancestor":
+            # Adjust y_pos for ancestors
+            new_y_pos = y_pos - 150
+            if focus_cat.parent1:
+                parent1 = Cat.all_cats.get(focus_cat.parent1)
+                self.add_family_elements(parent1, x_pos - 200, new_y_pos, depth + 1, max_depth, "ancestor")
+            if focus_cat.parent2:
+                parent2 = Cat.all_cats.get(focus_cat.parent2)
+                self.add_family_elements(parent2, x_pos + 100, new_y_pos, depth + 1, max_depth, "ancestor")
+
+        elif direction == "descendant":
+            # Adjust y_pos for descendants
+            children = [cat for cat_id, cat in Cat.all_cats.items() if cat.parent1 == focus_cat.ID or cat.parent2 == focus_cat.ID]
+            new_y_pos = y_pos + 150
+            child_spacing = 200
+            # Spread children horizontally
+            for i, child in enumerate(children):
+                child_x_pos = x_pos + (child_spacing * i) - (child_spacing * (len(children) - 1) / 2)
+                self.add_family_elements(child, child_x_pos, new_y_pos, depth + 1, max_depth, "descendant")
 
 
 
 
-        if self.parents:
-            self.siblings_button = UIImageButton(scale(pygame.Rect((152 + x_pos, 65 + y_pos), (316, 60))),
-                                                 "",
-                                                 object_id="#siblings_button",
-                                                 manager=MANAGER,
-                                                 container=self.family_tree)
-            if self.siblings:
-                if self.siblings_mates or self.siblings_kits:
-                    self.sibling_mates_button = UIImageButton(scale(pygame.Rect((464 + x_pos, 65 + y_pos), (418, 60))),
-                                                              "",
-                                                              object_id="#siblingmates_button",
-                                                              manager=MANAGER,
-                                                              container=self.family_tree)
-                if self.siblings_kits:
-                    self.sibling_kits_button = UIImageButton(scale(pygame.Rect((406 + x_pos, 97 + y_pos), (252, 164))),
-                                                             "",
-                                                             object_id="#siblingkits_button",
-                                                             manager=MANAGER,
-                                                             container=self.family_tree)
-            self.parents_button = UIImageButton(scale(pygame.Rect((136 + x_pos, -196 + y_pos), (176, 288))),
-                                                "",
-                                                object_id="#parents_button",
-                                                manager=MANAGER,
-                                                container=self.family_tree)
-            self.family_tree.add_element(self.parents_button)
-            if self.parents_siblings:
-                self.parents_siblings_button = UIImageButton(scale(pygame.Rect((308 + x_pos, -196 + y_pos), (436, 60))),
-                                                             "",
-                                                             object_id="#parentsiblings_button",
-                                                             manager=MANAGER,
-                                                             container=self.family_tree)
-                if self.cousins:
-                    self.cousins_button = UIImageButton(scale(pygame.Rect((504 + x_pos, -139 + y_pos), (170, 164))),
-                                                        "",
-                                                        object_id="#cousins_button",
-                                                        manager=MANAGER,
-                                                        container=self.family_tree)
-            if self.grandparents:
-                self.grandparents_button = UIImageButton(scale(pygame.Rect((94 + x_pos, -355 + y_pos), (260, 164))),
-                                                         "",
-                                                         object_id="#grandparents_button",
-                                                         manager=MANAGER,
-                                                         container=self.family_tree)
-
-        if self.mates or self.kits:
-            self.mates_button = UIImageButton(scale(pygame.Rect((-276 + x_pos, 65 + y_pos), (288, 60))),
-                                              "",
-                                              object_id="#mates_button",
-                                              manager=MANAGER,
-                                              container=self.family_tree)
-        if self.kits:
-            self.kits_button = UIImageButton(scale(pygame.Rect((-118 + x_pos, 97 + y_pos), (116, 164))),
-                                             "",
-                                             object_id="#kits_button",
-                                             manager=MANAGER,
-                                             container=self.family_tree)
-            if self.kits_mates or self.grandkits:
-                self.kits_mates_button = UIImageButton(scale(pygame.Rect((-477 + x_pos, 198 + y_pos), (364, 60))),
-                                                       "",
-                                                       object_id="#kitsmates_button",
-                                                       manager=MANAGER,
-                                                       container=self.family_tree)
-            if self.grandkits:
-                self.grandkits_button = UIImageButton(scale(pygame.Rect((-282 + x_pos, 233 + y_pos), (202, 164))),
-                                                      "",
-                                                      object_id="#grandkits_button",
-                                                      manager=MANAGER,
-                                                      container=self.family_tree)
 
     def handle_relation_groups(self):
         """Updates the given group"""
